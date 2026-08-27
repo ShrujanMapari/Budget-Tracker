@@ -97,25 +97,35 @@ public class BudgetManager
             boolean success = tracker.addExpenses(category, amount);
             if (success) {
                 UI.println("Expense added to " + category + "!");
-            }else if (type.equals("incomes")) {
+           }else if (type.equals("incomes")) {
                 UI.println("\nSelect Income Category:");
-                UI.println("1. Salary");
-                UI.println("2. Freelance/Part Time");
-                UI.println("3. Investment");
-        
+                UI.println("1. Ongoing employment");
+                UI.println("2. Student Allowance");
+                UI.println("3. Scholarships");
+                UI.println("4. Parents/Family");
+                UI.println("5. Wellfare Support");
+                UI.println("6. Holiday Work/Savings");
+                
                 choice = UI.askInt("Enter choice (1-3):");
                 category = "";
             
                 if (choice == 1) {
-                     category = "Salary";
+                    category = "Ongoing employment";
                 } else if (choice == 2) {
-                     category = "Freelance/Part Time";
+                    category = "Student Allowance";
                 } else if (choice == 3) {
-                     category = "Investment";
+                    category = "Scholarships";
+                } else if (choice == 4){
+                    category = "Parents/Family";
+                } else if (choice == 5){
+                    category = "Wellfare Support";
+                } else if (choice == 6){
+                    category = "Holiday Work/ Savings";
                 } else {
-                     UI.println("Invalid option selected!");
-                     return;
+                    UI.println("Invalid option selected!");
+                    return;
                 }
+              
         
                 amount = UI.askInt("How much did you earn? $");
                 tracker.addIncome(category, amount);
