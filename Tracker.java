@@ -29,9 +29,12 @@ public class Tracker
         this.expenses = new HashMap<>();
         
         //types of income
-        income.put("Salary", 0);
-        income.put("Freelance/Part Time", 0);
-        income.put("Investment", 0);
+        income.put("Ongoing employment", 0);
+        income.put("Student Allowance", 0);
+        income.put("Scholarships", 0);
+        income.put("Parents/Family", 0);
+        income.put("Wellfare Support", 0);
+        income.put("Holiday Work/Savings", 0);
         
         //types of expenses
         expenses.put("Grocery", 0);
@@ -78,15 +81,28 @@ public class Tracker
     
     
     public void displayIncome(){
-        UI.println("Income from salary: " + income.get("Salary"));
-        UI.println("Income from Freelance/Part Time: " + income.get("Freelance/Part Time"));
-        UI.println("Income from Investment: " + income.get("Investment"));
+        UI.println("Income from Ongoing employment: " + income.get("Ongoing employment"));
+        UI.println("Income from Student Allowance: " + income.get("Student Allowance"));
+        UI.println("Income from Scholarships: " + income.get("Scholarships"));
+        UI.println("Income from Parents/Family: " + income.get("Parents/Family"));
+        UI.println("Income from Wellfare Support: " + income.get("Wellfare Support"));
+        UI.println("Income from Holiday Work/Saving: " + income.get("Holiday Work/Saving"));
     }
     
     
     public void displayExpense(){
-        UI.println("Expense from Necessity: " + expenses.get("Necessities"));
-        UI.println("Expenses from Luxury: " + expenses.get("Luxury"));
+        UI.println("Expense from Grocery: " + expenses.get("Grocery"));
+        UI.println("Expenses from Rent: " + expenses.get("Rent"));
+        UI.println("Expense from Clothes: " + expenses.get("Clothes"));
+        UI.println("Expenses from Textbooks: " + expenses.get("Textbooks"));
+        UI.println("Expense from Eating Out: " + expenses.get("Eating Out"));
+        UI.println("Expenses from Vehicle Repairs/Petrol Prices: " + expenses.get("Vehicle Repairs/Petrol Prices"));
+        UI.println("Expense from Internet: " + expenses.get("Internet"));
+        UI.println("Expenses from Subscription: " + expenses.get("Subscription"));
+        UI.println("Expense from Debt Repayment: " + expenses.get("Debt Repayment"));
+        UI.println("Expenses from Gym: " + expenses.get("Gym"));
+        UI.println("Expense from Trips/Holidays: " + expenses.get("Trips/Holidays"));
+        UI.println("Expenses from Photocopying/Prinitng: " + expenses.get("Photocopying/Printing"));
     }
     
 
