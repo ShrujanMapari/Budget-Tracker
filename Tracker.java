@@ -24,6 +24,9 @@ public class Tracker
      */
     public Tracker()
     {
+        
+        
+        
         //initialise hashMaps
         this.income = new HashMap<>();
         this.expenses = new HashMap<>();
@@ -39,7 +42,7 @@ public class Tracker
         //types of expenses
         expenses.put("Grocery", 0);
         expenses.put("Rent", 0);
-        expenses.put("Cloths", 0);
+        expenses.put("Clothes", 0);
         expenses.put("Textbooks", 0);
         expenses.put("Eating Out", 0);
         expenses.put("Vehicle Repairs/Petrol Prices", 0);
@@ -49,6 +52,8 @@ public class Tracker
         expenses.put("Gym", 0);
         expenses.put("Trips/Holidays", 0);
         expenses.put("Photocopying/Printing", 0);
+
+        
         
         
     }
@@ -105,8 +110,12 @@ public class Tracker
         UI.println("Expenses from Photocopying/Prinitng: " + expenses.get("Photocopying/Printing"));
     }
     
+    
+    
+    
 
     public int getTotalExpenses(){
+              
         int total = 0;
 
         for (int amount : expenses.values())
@@ -118,6 +127,7 @@ public class Tracker
     }
     
     public int getTotalIncomes(){
+        
         int total = 0;
 
         for (int amount : income.values())
@@ -139,29 +149,3 @@ public class Tracker
     }
 
 }
-    ///**
-     //* An example of a method - replace this comment with your own
-     //*
-     //* @param  y  a sample parameter for a method
-     //* @return    the sum of x and y
-     //*/
-    //public int sampleMethod(int y)
-    //{
-        // put your code here
-        
-    //}
-//private() {
-        
-       // for (String category : income.keySet()) {
-         //   if (income.get(category) < 0) {
-           //     income.put(category, 0);
-            //}
-        //}
-    
-        
-        //for (String category : expenses.keySet()) {
-          //  if (expenses.get(category) < 0) {
-               // expenses.put(category, 0);
-            //}
-        //}
-    //}
