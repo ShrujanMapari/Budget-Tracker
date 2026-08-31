@@ -50,7 +50,7 @@ public class BudgetManager
             UI.println("\nSelect Expense Category:");
             UI.println("1. Grocery");
             UI.println("2. Rent");
-            UI.println("3. Cloths");
+            UI.println("3. Clothes");
             UI.println("4. Textbooks");
             UI.println("5. Eating Out");
             UI.println("6. Vehicle Repairs/Petrol Prices");
@@ -61,7 +61,7 @@ public class BudgetManager
             UI.println("11. Trips/Holidays");
             UI.println("12.Photocopying/Printing");
             
-            choice = UI.askInt("Enter choice (1-2):");
+            choice = UI.askInt("Enter choice (1-12):");
             String category = "";
     
             if (choice == 1) {
@@ -97,41 +97,46 @@ public class BudgetManager
             boolean success = tracker.addExpenses(category, amount);
             if (success) {
                 UI.println("Expense added to " + category + "!");
-           }else if (type.equals("incomes")) {
-                UI.println("\nSelect Income Category:");
-                UI.println("1. Ongoing employment");
-                UI.println("2. Student Allowance");
-                UI.println("3. Scholarships");
-                UI.println("4. Parents/Family");
-                UI.println("5. Wellfare Support");
-                UI.println("6. Holiday Work/Savings");
-                
-                choice = UI.askInt("Enter choice (1-3):");
-                category = "";
+            }else {
+                UI.println("Unexpected error has occured. Please Try Again.");
+            }
             
-                if (choice == 1) {
-                    category = "Ongoing employment";
-                } else if (choice == 2) {
-                    category = "Student Allowance";
-                } else if (choice == 3) {
-                    category = "Scholarships";
-                } else if (choice == 4){
-                    category = "Parents/Family";
-                } else if (choice == 5){
-                    category = "Wellfare Support";
-                } else if (choice == 6){
-                    category = "Holiday Work/ Savings";
-                } else {
-                    UI.println("Invalid option selected!");
-                    return;
-                }
-              
+            
+            
+        } else if (type.equals("incomes")) {
+            UI.println("\nSelect Income Category:");
+            UI.println("1. Ongoing employment");
+            UI.println("2. Student Allowance");
+            UI.println("3. Scholarships");
+            UI.println("4. Parents/Family");
+            UI.println("5. Wellfare Support");
+            UI.println("6. Holiday Work/Savings");
+                
+            choice = UI.askInt("Enter choice (1-6):");
+            String category = "";
+            
+            if (choice == 1) {
+                category = "Ongoing employment";
+            } else if (choice == 2) {
+                category = "Student Allowance";
+            } else if (choice == 3) {
+                category = "Scholarships";
+            } else if (choice == 4){
+                category = "Parents/Family";
+            } else if (choice == 5){
+                category = "Wellfare Support";
+            } else if (choice == 6){
+                category = "Holiday Work/ Savings";
+            } else {
+                UI.println("Invalid option selected!");
+                return;
+            }
         
                 amount = UI.askInt("How much did you earn? $");
                 tracker.addIncome(category, amount);
                 UI.println("Income added to " + category + "!");
             }
-        }
+        
     }
     /**
      * 
@@ -141,22 +146,4 @@ public class BudgetManager
     }
     
 }
-
-    //**
-     //* Handles Mouse click
-     //*/
-    //public void doMouse(String action){
-        
-    //}
-
-    ///**
-     //* An example of a method - replace this comment with your own
-     //*
-     //* @param  y  a sample parameter for a method
-     //* @return    the sum of x and y
-     //*/
-    //public int sampleMethod(int y)
-    //{
-        // put your code here
-      //  return x + y;
-    //}
+          
