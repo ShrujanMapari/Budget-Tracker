@@ -31,12 +31,22 @@ public class BudgetManager
         UI.addButton("Add Income", () -> this.transactions("incomes"));
         UI.addButton("Add Expense", () -> this.transactions("expenses"));
         
+        
         UI.addButton("Show Balance", this::showBalance);
+        
+        UI.addButton("Show Transactions", this::showTransactions);
 
         //User currentUser = new User(username, password);
     }
     
+    
+    
+    
+    
     //public void newPassword(){
+       
+        
+        
         
     //}    
     
@@ -44,7 +54,7 @@ public class BudgetManager
      * 
      */
     public void transactions(String type) {
-        int amount;
+        double amount;
         int choice;
         if (type.equals("expenses")) {
             UI.println("\nSelect Expense Category:");
@@ -80,20 +90,20 @@ public class BudgetManager
                 category = "Internet";
             } else if (choice == 8) {
                 category = "Subscriptions";
-            }else if (choice == 5) {
+            }else if (choice == 9) {
                 category = "Debt Repayment";
-            } else if (choice == 6) {
+            } else if (choice == 10) {
                 category = "Gym";
-            }else if (choice == 7) {
+            }else if (choice == 11) {
                 category = "Trips/Holidays";
-            } else if (choice == 8) {
+            } else if (choice == 12) {
                 category = "Photocopying/Printing";
             }else {
                 UI.println("Invalid option selected!");
                 return;
             }
     
-            amount = UI.askInt("How much did it cost? $");
+            amount = UI.askDouble("How much did it cost? $");
             boolean success = tracker.addExpenses(category, amount);
             if (success) {
                 UI.println("Expense added to " + category + "!");
@@ -126,18 +136,23 @@ public class BudgetManager
             } else if (choice == 5){
                 category = "Wellfare Support";
             } else if (choice == 6){
-                category = "Holiday Work/ Savings";
+                category = "Holiday Work/Savings";
             } else {
                 UI.println("Invalid option selected!");
                 return;
             }
         
-                amount = UI.askInt("How much did you earn? $");
+                amount = UI.askDouble("How much did you earn? $");
                 tracker.addIncome(category, amount);
                 UI.println("Income added to " + category + "!");
             }
         
     }
+    
+    public void showTransactions(){
+        tracker.displayTransactions();
+    }
+    
     /**
      * 
      */
@@ -146,4 +161,3 @@ public class BudgetManager
     }
     
 }
-          
