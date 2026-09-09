@@ -1,6 +1,7 @@
 import ecs100.*;
 import java.util.HashMap;
 import java.awt.Color;
+import java.util.ArrayList;
 /**
  * Support Class which keeps track of the users finances.
  *
@@ -13,10 +14,11 @@ public class Tracker
     // instance variables - replace the example below with your own
     
 
-    private HashMap<String, Integer> income;
+    private HashMap<String, Double> income;
     
-    private HashMap<String, Integer> expenses;
+    private HashMap<String, Double> expenses;
     
+    private ArrayList<Transactions> transactions;
     
     
     /**
@@ -32,26 +34,26 @@ public class Tracker
         this.expenses = new HashMap<>();
         
         //types of income
-        income.put("Ongoing employment", 0);
-        income.put("Student Allowance", 0);
-        income.put("Scholarships", 0);
-        income.put("Parents/Family", 0);
-        income.put("Wellfare Support", 0);
-        income.put("Holiday Work/Savings", 0);
+        income.put("Ongoing employment", 0.0);
+        income.put("Student Allowance", 0.0);
+        income.put("Scholarships", 0.0);
+        income.put("Parents/Family", 0.0);
+        income.put("Wellfare Support", 0.0);
+        income.put("Holiday Work/Savings", 0.0);
         
         //types of expenses
-        expenses.put("Grocery", 0);
-        expenses.put("Rent", 0);
-        expenses.put("Clothes", 0);
-        expenses.put("Textbooks", 0);
-        expenses.put("Eating Out", 0);
-        expenses.put("Vehicle Repairs/Petrol Prices", 0);
-        expenses.put("Internet", 0);
-        expenses.put("Subcriptions", 0);
-        expenses.put("Debt Repayment", 0);
-        expenses.put("Gym", 0);
-        expenses.put("Trips/Holidays", 0);
-        expenses.put("Photocopying/Printing", 0);
+        expenses.put("Grocery", 0.0);
+        expenses.put("Rent", 0.0);
+        expenses.put("Clothes", 0.0);
+        expenses.put("Textbooks", 0.0);
+        expenses.put("Eating Out", 0.0);
+        expenses.put("Vehicle Repairs/Petrol Prices", 0.0);
+        expenses.put("Internet", 0.0);
+        expenses.put("Subcriptions", 0.0);
+        expenses.put("Debt Repayment", 0.0);
+        expenses.put("Gym", 0.0);
+        expenses.put("Trips/Holidays", 0.0);
+        expenses.put("Photocopying/Printing", 0.0);
 
         
         
@@ -61,15 +63,16 @@ public class Tracker
     /**
      * 
      */
-    public void addIncome(String category, int amount) {
+    public void addIncome(String category, double amount) {
         if (income.containsKey(category)) {
             income.put(category, income.get(category) + amount);
+            transactions.add(new Transactions("Income", category, amount));
         } else {
             UI.println("Category not found!");
         }
     }
     
-    public boolean addExpenses(String category, int amount){
+    public boolean addExpenses(String category, double amount){
         if (!expenses.containsKey(category)) {
             UI.println("Category not found!");
         }
@@ -78,9 +81,19 @@ public class Tracker
             UI.println("Transaction declined! Not enough funds.");
             UI.println("Current Balance: $" + balance() + " | Expense Amount: $" + amount);
             return false;
-        } else {
+        
+        }else {
             expenses.put(category, expenses.get(category) + amount);
             return true;
+        }
+    }
+    
+    public void displayTransactions(){
+        UI.println("\n--- Transaction History ---");
+
+        for (Transactions transaction : transactions)
+        {
+            UI.println(transaction);
         }
     }
     
@@ -114,11 +127,23 @@ public class Tracker
     
     
 
-    public int getTotalExpenses(){
-              
-        int total = 0;
+    public double getTotalIncomes()
+    {
+        double total = 0.0;
+    
+        for (double amount : income.values())
+        {
+            total = total + amount;
+        }
+    
+        return total;
+    }
+    
+    
+    public double getTotalExpenses(){     
+        double total = 0.0;
 
-        for (int amount : expenses.values())
+        for (double amount : expenses.values())
         {
             total = total + amount;
         }
@@ -126,19 +151,7 @@ public class Tracker
         return total;
     }
     
-    public int getTotalIncomes(){
-        
-        int total = 0;
-
-        for (int amount : income.values())
-        {
-            total = total + amount;
-        }
-
-        return total;
-    }
-    
-    public int balance(){
+    public double balance(){
         return getTotalIncomes() - getTotalExpenses();
     }
     
