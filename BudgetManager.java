@@ -1,6 +1,7 @@
 import ecs100.*;
 import java.util.HashMap;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 /**
  * Driver Class.
  *
@@ -31,10 +32,11 @@ public class BudgetManager
         UI.addButton("Add Income", () -> this.transactions("incomes"));
         UI.addButton("Add Expense", () -> this.transactions("expenses"));
         
-        
         UI.addButton("Show Balance", this::showBalance);
         
         UI.addButton("Show Transactions", this::showTransactions);
+        
+        UI.addButton("Delete Transaction", this::deleteTransaction);
 
         //User currentUser = new User(username, password);
     }
@@ -70,8 +72,9 @@ public class BudgetManager
             UI.println("10. Gym");
             UI.println("11. Trips/Holidays");
             UI.println("12.Photocopying/Printing");
+            UI.println("13. Others");
             
-            choice = UI.askInt("Enter choice (1-12):");
+            choice = UI.askInt("Enter choice (1-13):");
             String category = "";
     
             if (choice == 1) {
@@ -79,7 +82,7 @@ public class BudgetManager
             } else if (choice == 2) {
                 category = "Rent";
             } else if (choice == 3) {
-                category = "Cloths";
+                category = "Clothes";
             } else if (choice == 4) {
                 category = "Textbooks";
             }else if (choice == 5) {
@@ -98,6 +101,8 @@ public class BudgetManager
                 category = "Trips/Holidays";
             } else if (choice == 12) {
                 category = "Photocopying/Printing";
+            }else if (choice == 13){
+                category = "Others";
             }else {
                 UI.println("Invalid option selected!");
                 return;
@@ -121,8 +126,9 @@ public class BudgetManager
             UI.println("4. Parents/Family");
             UI.println("5. Wellfare Support");
             UI.println("6. Holiday Work/Savings");
+            UI.println("7. Others");
                 
-            choice = UI.askInt("Enter choice (1-6):");
+            choice = UI.askInt("Enter choice (1-7):");
             String category = "";
             
             if (choice == 1) {
@@ -137,14 +143,16 @@ public class BudgetManager
                 category = "Wellfare Support";
             } else if (choice == 6){
                 category = "Holiday Work/Savings";
-            } else {
+            } else if (choice == 7){
+                category = "Others";
+            }else {
                 UI.println("Invalid option selected!");
                 return;
             }
         
-                amount = UI.askDouble("How much did you earn? $");
-                tracker.addIncome(category, amount);
-                UI.println("Income added to " + category + "!");
+            amount = UI.askDouble("How much did you earn? $");
+            tracker.addIncome(category, amount);
+            UI.println("Income added to " + category + "!");
             }
         
     }
@@ -158,6 +166,29 @@ public class BudgetManager
      */
     public void showBalance(){
         tracker.displayBalance();
+    }
+    
+    
+    public void deleteTransaction(){
+        tracker.displayTransactions();
+        int choice = UI.askInt("Which transaction do you want to delete? (1-" + tracker.getTransactionCount() + ")");
+      
+        int firstConfirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this transaction?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+    
+        if (firstConfirm != JOptionPane.YES_OPTION){
+            UI.println("Transaction deletion cancelled.");
+            return;
+        }
+    
+        int secondConfirm = JOptionPane.showConfirmDialog(null, "This action cannot be undone. Delete this transaction?", "Final Confirmation", JOptionPane.YES_NO_OPTION);
+    
+        if (secondConfirm != JOptionPane.YES_OPTION){
+            UI.println("Transaction deletion cancelled.");
+            return;
+        }
+    
+        tracker.deleteTransaction(choice);
+
     }
     
 }
