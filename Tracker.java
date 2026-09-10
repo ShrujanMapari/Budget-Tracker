@@ -33,6 +33,9 @@ public class Tracker
         this.income = new HashMap<>();
         this.expenses = new HashMap<>();
         
+        //initialise array
+        transactions = new ArrayList<Transactions>();
+        
         //types of income
         income.put("Ongoing employment", 0.0);
         income.put("Student Allowance", 0.0);
@@ -40,6 +43,7 @@ public class Tracker
         income.put("Parents/Family", 0.0);
         income.put("Wellfare Support", 0.0);
         income.put("Holiday Work/Savings", 0.0);
+        income.put("Others", 0.0);
         
         //types of expenses
         expenses.put("Grocery", 0.0);
@@ -54,6 +58,7 @@ public class Tracker
         expenses.put("Gym", 0.0);
         expenses.put("Trips/Holidays", 0.0);
         expenses.put("Photocopying/Printing", 0.0);
+        expenses.put("Others", 0.0);
 
         
         
@@ -84,47 +89,48 @@ public class Tracker
         
         }else {
             expenses.put(category, expenses.get(category) + amount);
+            transactions.add(new Transactions("Expenses", category, amount));
             return true;
         }
     }
     
     public void displayTransactions(){
         UI.println("\n--- Transaction History ---");
-
-        for (Transactions transaction : transactions)
-        {
-            UI.println(transaction);
+    
+        for (int i = 0; i < transactions.size(); i++){
+            UI.println((i + 1) + ". " + transactions.get(i));
         }
     }
     
-    
-    public void displayIncome(){
-        UI.println("Income from Ongoing employment: " + income.get("Ongoing employment"));
-        UI.println("Income from Student Allowance: " + income.get("Student Allowance"));
-        UI.println("Income from Scholarships: " + income.get("Scholarships"));
-        UI.println("Income from Parents/Family: " + income.get("Parents/Family"));
-        UI.println("Income from Wellfare Support: " + income.get("Wellfare Support"));
-        UI.println("Income from Holiday Work/Saving: " + income.get("Holiday Work/Saving"));
+    public int getTransactionCount(){
+        return transactions.size();
     }
     
-    
-    public void displayExpense(){
-        UI.println("Expense from Grocery: " + expenses.get("Grocery"));
-        UI.println("Expenses from Rent: " + expenses.get("Rent"));
-        UI.println("Expense from Clothes: " + expenses.get("Clothes"));
-        UI.println("Expenses from Textbooks: " + expenses.get("Textbooks"));
-        UI.println("Expense from Eating Out: " + expenses.get("Eating Out"));
-        UI.println("Expenses from Vehicle Repairs/Petrol Prices: " + expenses.get("Vehicle Repairs/Petrol Prices"));
-        UI.println("Expense from Internet: " + expenses.get("Internet"));
-        UI.println("Expenses from Subscription: " + expenses.get("Subscription"));
-        UI.println("Expense from Debt Repayment: " + expenses.get("Debt Repayment"));
-        UI.println("Expenses from Gym: " + expenses.get("Gym"));
-        UI.println("Expense from Trips/Holidays: " + expenses.get("Trips/Holidays"));
-        UI.println("Expenses from Photocopying/Prinitng: " + expenses.get("Photocopying/Printing"));
+    public void deleteTransaction(int choice){
+        int index = choice - 1;
+
+        if (index >= 0 && index < transactions.size()){
+            Transactions transaction = transactions.get(index);
+
+            if (transaction.getType().equals("Income")){
+                String category = transaction.getCategory();
+                double amount = transaction.getAmount();
+
+                income.put(category, income.get(category) - amount);
+            }else if (transaction.getType().equals("Expense")){
+                String category = transaction.getCategory();
+                double amount = transaction.getAmount();
+
+                expenses.put(category, expenses.get(category) - amount);
+            }
+
+            transactions.remove(index);
+
+            UI.println("Transaction deleted.");
+        }else{
+            UI.println("Invalid transaction number.");
+        }
     }
-    
-    
-    
     
 
     public double getTotalIncomes()
@@ -160,5 +166,7 @@ public class Tracker
         UI.println("Total Expenses: $" + getTotalExpenses());
         UI.println("Bank Balance: $" + balance());
     }
+    
 
+    
 }
