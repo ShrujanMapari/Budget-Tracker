@@ -53,7 +53,7 @@ public class Tracker
         expenses.put("Eating Out", 0.0);
         expenses.put("Vehicle Repairs/Petrol Prices", 0.0);
         expenses.put("Internet", 0.0);
-        expenses.put("Subcriptions", 0.0);
+        expenses.put("Subscriptions", 0.0);
         expenses.put("Debt Repayment", 0.0);
         expenses.put("Gym", 0.0);
         expenses.put("Trips/Holidays", 0.0);
@@ -167,6 +167,12 @@ public class Tracker
         UI.println("Bank Balance: $" + balance());
     }
     
+    public HashMap<String, Double> getIncome(){
+        return income;
+    }
 
+    public HashMap<String, Double> getExpenses(){
+        return expenses;
+    }
     
 }
