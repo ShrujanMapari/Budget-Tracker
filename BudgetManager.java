@@ -13,44 +13,58 @@ public class BudgetManager
     // instance variables - replace the example below with your own
     private static Tracker tracker;
     
+    private PieChart pieChart;
+    
     //String username = UI.askString("Enter username");
     //String password = UI.askString("Enter password"); 
+    
+    
     
 
     /**
      * Constructor for objects of class Budget
      */
-    public BudgetManager()
-    {
+    public BudgetManager(){
         // initialise instance variables
         UI.initialise();
         
-        tracker = new Tracker();
         
-        UI.addButton("Quit", UI::quit);
+        tracker = new Tracker();
+        pieChart = new PieChart(tracker);
+        
+        UI.addButton("Instructions", this::instructions);
+        
+        
         //UI.setMouseListener(this::doMouse)
         UI.addButton("Add Income", () -> this.transactions("incomes"));
         UI.addButton("Add Expense", () -> this.transactions("expenses"));
+        
+        UI.addButton("Income Pie Chart", pieChart::drawIncomeChart);
+        UI.addButton("Expense Pie Chart", pieChart::drawExpenseChart);
+        
         
         UI.addButton("Show Balance", this::showBalance);
         
         UI.addButton("Show Transactions", this::showTransactions);
         
         UI.addButton("Delete Transaction", this::deleteTransaction);
+        
+        UI.addButton("Quit", UI::quit);      
 
         //User currentUser = new User(username, password);
     }
     
-    
-    
-    
-    
-    //public void newPassword(){
-       
+    public void instructions(){
+        JOptionPane.showMessageDialog(null, "Welcome to Budget Tracker!\n\n" + 
+        "This program helps you manage your income and expenses.\n\n" + 
+        "1. Add Income - record money you receive \n" + 
+        "2. Add Expense - record money you spend\n" + 
+        "3. Show Balance - view your current balance\n" + 
+        "4. Delete Transaction - remove a transaction\n" + 
+        "5. Pie Charts - see where your income and expense come from/go\n\n" + 
+        "Start by adding some income before adding expenses.");       
         
-        
-        
-    //}    
+    }
     
     /**
      * 
@@ -153,7 +167,8 @@ public class BudgetManager
             amount = UI.askDouble("How much did you earn? $");
             tracker.addIncome(category, amount);
             UI.println("Income added to " + category + "!");
-            }
+            
+        }
         
     }
     
@@ -191,4 +206,8 @@ public class BudgetManager
 
     }
     
+    
+    public static void main(String[] args){
+        new BudgetManager();
+    }
 }
