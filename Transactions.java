@@ -12,13 +12,18 @@ public class Transactions
     private String type;
     private String category;
     private double amount;
+    private String description;
+    private String date;
+    
     /**
      * Constructor for objects of class Transactions
      */
-    public Transactions(String type, String category, double amount){
+    public Transactions(String type, String category, double amount, String description, String date){
         this.type = type;
         this.category = category;
         this.amount = amount;
+        this.description = description;
+        this.date = date;
     }
 
     public String getType(){
@@ -33,7 +38,21 @@ public class Transactions
         return amount;
     }
 
+    public String getDescription(){
+        return description;
+    }
+    
+    public String getDate(){
+        return date;
+    }
+    
     public String toString(){
+        if (category.equals("Others") && !description.equals(""))
+        {
+            return type + " - Others (" + description + ") - $" + amount;
+        }
+    
         return type + " - " + category + " - $" + amount;
     }
 }
+
