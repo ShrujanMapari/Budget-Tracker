@@ -2,6 +2,7 @@ import ecs100.*;
 import java.util.HashMap;
 import java.awt.Color;
 import java.util.ArrayList;
+
 /**
  * Support Class which keeps track of the users finances.
  *
@@ -68,18 +69,21 @@ public class Tracker
     /**
      * 
      */
-    public void addIncome(String category, double amount) {
+    public void addIncome(String category, double amount, String description, String date) {
         if (income.containsKey(category)) {
             income.put(category, income.get(category) + amount);
-            transactions.add(new Transactions("Income", category, amount));
+            transactions.add(new Transactions("Income", category, amount, description, date));
         } else {
             UI.println("Category not found!");
         }
+        
+        
     }
     
-    public boolean addExpenses(String category, double amount){
+    public boolean addExpenses(String category, double amount, String description, String date){
         if (!expenses.containsKey(category)) {
             UI.println("Category not found!");
+            return false;
         }
         
         if (amount > balance()) {
@@ -89,7 +93,7 @@ public class Tracker
         
         }else {
             expenses.put(category, expenses.get(category) + amount);
-            transactions.add(new Transactions("Expenses", category, amount));
+            transactions.add(new Transactions("Expense", category, amount, description, date));
             return true;
         }
     }
@@ -104,6 +108,10 @@ public class Tracker
     
     public int getTransactionCount(){
         return transactions.size();
+    }
+    
+    public ArrayList<Transactions> getTransactions(){
+        return transactions;
     }
     
     public void deleteTransaction(int choice){
@@ -176,3 +184,4 @@ public class Tracker
     }
     
 }
+
