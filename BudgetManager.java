@@ -2,6 +2,9 @@ import ecs100.*;
 import java.util.HashMap;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 /**
  * Driver Class.
  *
@@ -15,6 +18,7 @@ public class BudgetManager
     
     private PieChart pieChart;
     
+    private LineChart lineChart;
     //String username = UI.askString("Enter username");
     //String password = UI.askString("Enter password"); 
     
@@ -31,17 +35,14 @@ public class BudgetManager
         
         tracker = new Tracker();
         pieChart = new PieChart(tracker);
+        lineChart = new LineChart(tracker);
         
         UI.addButton("Instructions", this::instructions);
         
         
         //UI.setMouseListener(this::doMouse)
         UI.addButton("Add Income", () -> this.transactions("incomes"));
-        UI.addButton("Add Expense", () -> this.transactions("expenses"));
-        
-        UI.addButton("Income Pie Chart", pieChart::drawIncomeChart);
-        UI.addButton("Expense Pie Chart", pieChart::drawExpenseChart);
-        
+        UI.addButton("Add Expense", () -> this.transactions("expenses"));        
         
         UI.addButton("Show Balance", this::showBalance);
         
@@ -70,8 +71,13 @@ public class BudgetManager
      * 
      */
     public void transactions(String type) {
+        UI.clearText();
+        
         double amount;
         int choice;
+        String description = "";
+        String date;
+        
         if (type.equals("expenses")) {
             UI.println("\nSelect Expense Category:");
             UI.println("1. Grocery");
@@ -90,7 +96,7 @@ public class BudgetManager
             
             choice = UI.askInt("Enter choice (1-13):");
             String category = "";
-    
+            date = askDate();
             if (choice == 1) {
                 category = "Grocery";
             } else if (choice == 2) {
@@ -117,15 +123,18 @@ public class BudgetManager
                 category = "Photocopying/Printing";
             }else if (choice == 13){
                 category = "Others";
+                description = UI.askString("What do you mean by Others?");
             }else {
                 UI.println("Invalid option selected!");
                 return;
             }
     
             amount = UI.askDouble("How much did it cost? $");
-            boolean success = tracker.addExpenses(category, amount);
+            boolean success = tracker.addExpenses(category, amount, description, date);
             if (success) {
                 UI.println("Expense added to " + category + "!");
+                pieChart.drawCharts();
+                lineChart.drawLineChart();
             }else {
                 UI.println("Unexpected error has occured. Please Try Again.");
             }
@@ -144,7 +153,7 @@ public class BudgetManager
                 
             choice = UI.askInt("Enter choice (1-7):");
             String category = "";
-            
+            date = askDate();
             if (choice == 1) {
                 category = "Ongoing employment";
             } else if (choice == 2) {
@@ -159,20 +168,34 @@ public class BudgetManager
                 category = "Holiday Work/Savings";
             } else if (choice == 7){
                 category = "Others";
+                description = UI.askString("What do you mean by Others?");
             }else {
                 UI.println("Invalid option selected!");
                 return;
             }
         
             amount = UI.askDouble("How much did you earn? $");
-            tracker.addIncome(category, amount);
-            UI.println("Income added to " + category + "!");
             
+            if (amount <= 0){
+                UI.println("Income must be greater than $0.");
+                return;
+            }
+
+            if (amount > 100000){
+                UI.println("Income cannot exceed $100,000 in a single transaction.");
+                return;
+            }
+            
+            tracker.addIncome(category, amount, description, date);
+            UI.println("Income added to " + category + "!");
+            pieChart.drawCharts();
+            lineChart.drawLineChart();
         }
         
     }
     
     public void showTransactions(){
+        UI.clearText();
         tracker.displayTransactions();
     }
     
@@ -180,11 +203,13 @@ public class BudgetManager
      * 
      */
     public void showBalance(){
+        UI.clearText();
         tracker.displayBalance();
     }
     
     
     public void deleteTransaction(){
+        UI.clearText();
         tracker.displayTransactions();
         int choice = UI.askInt("Which transaction do you want to delete? (1-" + tracker.getTransactionCount() + ")");
       
@@ -203,9 +228,34 @@ public class BudgetManager
         }
     
         tracker.deleteTransaction(choice);
-
+        pieChart.drawCharts();
+        lineChart.drawLineChart();
     }
     
+    public String askDate(){
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+    
+        while (true){
+    
+            String date = UI.askString("Enter date (DD/MM/YYYY):");
+    
+            try{
+                LocalDate enteredDate = LocalDate.parse(date, format);
+                LocalDate today = LocalDate.now();
+    
+                if (enteredDate.isAfter(today)){
+                    UI.println("Date cannot be in the future.");
+                }
+                else{
+                    return date;
+                }
+            }
+            catch (DateTimeParseException e){
+                UI.println( "Invalid date. Please use DD/MM/YYYY.");
+            }
+        }
+    }
     
     public static void main(String[] args){
         new BudgetManager();
