@@ -19,14 +19,16 @@ public class PieChart
     }
     
     public void drawExpenseChart(){
-        UI.clearGraphics();
+        
         
         HashMap<String, Double> expenses = tracker.getExpenses();
     
         double total = tracker.getTotalExpenses();
     
         if (total == 0){
-            UI.println("There are no expenses to display.");
+            UI.setColor(Color.BLACK);
+            UI.drawString("Expense", 70, 310);
+            UI.drawString("Please add expense to display the chart.", 50, 360);
             return;
         }
     
@@ -41,30 +43,34 @@ public class PieChart
     
                 UI.setColor(colours[colourNumber % colours.length]);
     
-                UI.fillArc(100, 100, 300, 300, startAngle, angle);
+                UI.fillArc(50, 330, 180, 180, startAngle, angle);
     
                 startAngle = startAngle + angle;
                 colourNumber++;
             }
         }
-        drawLegend(expenses, total);
+        drawLegend(expenses, total, 260, 360);
     }
     
     public void drawIncomeChart(){
-        UI.clearGraphics();
+        
         
         HashMap<String, Double> income = tracker.getIncome();
     
         double total = tracker.getTotalIncomes();
     
         if (total == 0){
-            UI.println("There is no income to display.");
+            UI.setColor(Color.BLACK);
+            UI.drawString("INCOME", 70, 40);
+            UI.drawString("Please add income to display the chart.", 50, 200);
             return;
         }
     
         double startAngle = 0;
         int colourNumber = 0;
-    
+        
+            
+        
         for (String category : income.keySet()){
             double amount = income.get(category);
     
@@ -73,19 +79,17 @@ public class PieChart
     
                 UI.setColor(colours[colourNumber % colours.length]);
     
-                UI.fillArc(100, 100, 300, 300, startAngle, angle);
+                UI.fillArc(50, 60, 180, 180, startAngle, angle);
     
                 startAngle = startAngle + angle;
                 colourNumber++;
             }
         }
-        drawLegend(income, total);
+        drawLegend(income, total, 260, 90);
     }
     
     
-    public void drawLegend(HashMap<String, Double> data, double total){
-        double x = 450;
-        double y = 120;
+    public void drawLegend(HashMap<String, Double> data, double total, double x, double y){
         int colourNumber = 0;
     
         for (String category : data.keySet()){
@@ -95,7 +99,6 @@ public class PieChart
                 double percentage = (amount / total) * 100;
     
                 UI.setColor(colours[colourNumber % colours.length]);
-    
                 UI.fillRect(x, y, 15, 15);
     
                 UI.setColor(Color.BLACK);
@@ -106,5 +109,12 @@ public class PieChart
                 colourNumber++;
             }
         }
+    }
+    
+    public void drawCharts(){
+        UI.clearGraphics();
+    
+        drawIncomeChart();
+        drawExpenseChart();
     }
 }
