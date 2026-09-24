@@ -54,5 +54,20 @@ public class Transactions
     
         return type + " - " + category + " - $" + amount;
     }
+    
+    public void setAmount(double amount){
+        this.amount = amount;
+    }
+    
+    public void setCategory(String category){
+        this.category = category;
+    }
+    
+    public void setDescription(String description){
+        this.description = description;
+    }
+    
+    public void setDate(String date){
+        this.date = date;
+    }
 }
-
