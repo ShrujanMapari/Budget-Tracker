@@ -2,6 +2,11 @@ import ecs100.*;
 import java.util.HashMap;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.io.IOException;
+
 
 /**
  * Support Class which keeps track of the users finances.
@@ -71,9 +76,22 @@ public class Tracker
      */
     public void addIncome(String category, double amount, String description, String date) {
         if (income.containsKey(category)) {
+            
+            if (amount <= 0){
+                UI.println("Income must be greater than $0.");
+                return;
+            }
+
+            if (amount > 100000){
+               UI.println("Income cannot exceed $100,000 in a single transaction.");
+               return;
+            }
+            
             income.put(category, income.get(category) + amount);
             transactions.add(new Transactions("Income", category, amount, description, date));
-        } else {
+            UI.println("Income added to " + category + "!");
+            
+        }else {
             UI.println("Category not found!");
         }
         
@@ -84,14 +102,12 @@ public class Tracker
         if (!expenses.containsKey(category)) {
             UI.println("Category not found!");
             return false;
-        }
-        
-        if (amount > balance()) {
-            UI.println("Transaction declined! Not enough funds.");
-            UI.println("Current Balance: $" + balance() + " | Expense Amount: $" + amount);
-            return false;
-        
         }else {
+            if (amount > getTotalIncomes()){
+                UI.println("Insufficient balance!");
+                return false;
+            }
+            
             expenses.put(category, expenses.get(category) + amount);
             transactions.add(new Transactions("Expense", category, amount, description, date));
             return true;
@@ -183,5 +199,137 @@ public class Tracker
         return expenses;
     }
     
-}
+    public void saveData(){
 
+        try{
+            PrintWriter writer = new PrintWriter("budgetData.txt");
+    
+            for (Transactions transaction : transactions){
+    
+                writer.println(transaction.getType() + "|" + transaction.getCategory() + "|" + transaction.getAmount() + "|" + transaction.getDescription() + "|" + transaction.getDate()
+                );
+            }
+    
+            writer.close();
+    
+            UI.println("Data saved successfully.");
+        }
+        catch (IOException e){
+            UI.println("Error saving data.");
+        }
+    }
+    
+    public boolean loadData(){
+
+        try{
+            File file = new File("budgetData.txt");
+    
+            if (!file.exists()){
+                UI.println("No saved data found.");
+                return false;
+            }
+    
+            // Clear old transaction data
+            transactions.clear();
+    
+            // Reset income totals
+            for (String category : income.keySet()){
+                income.put(category, 0.0);
+            }
+    
+            // Reset expense totals
+            for (String category : expenses.keySet()){
+                expenses.put(category, 0.0);
+            }
+    
+            Scanner scanner = new Scanner(file);
+    
+            while (scanner.hasNextLine()){
+    
+                String line = scanner.nextLine();
+    
+                String[] parts = line.split("\\|", -1);
+    
+                String type = parts[0];
+                String category = parts[1];
+                double amount = Double.parseDouble(parts[2]);
+                String description = parts[3];
+                String date = parts[4];
+    
+                Transactions transaction = new Transactions(type, category, amount, description, date);
+    
+                transactions.add(transaction);
+    
+                if (type.equals("Income")){
+                    income.put(category, income.get(category) + amount);
+                }
+                else if (type.equals("Expense")){
+                    expenses.put(category, expenses.get(category) + amount);
+                }
+            }
+    
+            scanner.close();
+    
+            UI.println("Data loaded successfully.");
+            return true;
+        }
+        catch (Exception e){
+            UI.println("Error loading data.");
+            return false;
+        }
+    }
+    
+    public void rebuildTotals(){
+    
+        // Reset all income categories
+        for (String category : income.keySet()){
+            income.put(category, 0.0);
+        }
+    
+        // Reset all expense categories
+        for (String category : expenses.keySet()){
+            expenses.put(category, 0.0);
+        }
+    
+        // Recalculate totals from transaction history
+        for (Transactions transaction : transactions){
+    
+            String category = transaction.getCategory();
+            double amount = transaction.getAmount();
+    
+            if (transaction.getType().equals("Income")){
+                income.put(
+                    category,
+                    income.get(category) + amount
+                );
+            }
+            else if (transaction.getType().equals("Expense")){
+                expenses.put(
+                    category,
+                    expenses.get(category) + amount
+                );
+            }
+        }
+    }
+    
+    public void editTransaction(int choice, double newAmount){
+        int index = choice - 1;
+    
+        if (index >= 0 && index < transactions.size()){
+    
+            Transactions transaction = transactions.get(index);
+    
+            // Change the existing object
+            transaction.setAmount(newAmount);
+    
+            rebuildTotals();
+    
+            UI.println("Transaction edited.");
+        }
+        else{
+            UI.println("Invalid transaction number.");
+        }
+    }
+    
+    
+}
