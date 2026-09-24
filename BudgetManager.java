@@ -40,6 +40,7 @@ public class BudgetManager
         UI.addButton("Instructions", this::instructions);
         
         
+        
         //UI.setMouseListener(this::doMouse)
         UI.addButton("Add Income", () -> this.transactions("incomes"));
         UI.addButton("Add Expense", () -> this.transactions("expenses"));        
@@ -49,6 +50,9 @@ public class BudgetManager
         UI.addButton("Show Transactions", this::showTransactions);
         
         UI.addButton("Delete Transaction", this::deleteTransaction);
+        
+        UI.addButton("Save", this::saveData);
+        UI.addButton("Load", this::loadData);
         
         UI.addButton("Quit", UI::quit);      
 
@@ -62,7 +66,8 @@ public class BudgetManager
         "2. Add Expense - record money you spend\n" + 
         "3. Show Balance - view your current balance\n" + 
         "4. Delete Transaction - remove a transaction\n" + 
-        "5. Pie Charts - see where your income and expense come from/go\n\n" + 
+        "5. Pie Charts - see where your income and expense come from/go\n" +
+        "6. Line Charts - see how much you spend and earned on a given date\n\n" +
         "Start by adding some income before adding expenses.");       
         
     }
@@ -174,20 +179,10 @@ public class BudgetManager
                 return;
             }
         
-            amount = UI.askDouble("How much did you earn? $");
-            
-            if (amount <= 0){
-                UI.println("Income must be greater than $0.");
-                return;
-            }
-
-            if (amount > 100000){
-                UI.println("Income cannot exceed $100,000 in a single transaction.");
-                return;
-            }
+            amount = UI.askDouble("How much did you earn? $");          
             
             tracker.addIncome(category, amount, description, date);
-            UI.println("Income added to " + category + "!");
+            
             pieChart.drawCharts();
             lineChart.drawLineChart();
         }
@@ -256,6 +251,25 @@ public class BudgetManager
             }
         }
     }
+    
+    public void saveData(){
+        UI.clearText();
+    
+        tracker.saveData();
+    }
+    
+    public void loadData(){
+        UI.clearText();
+    
+        boolean success = tracker.loadData();
+    
+        if (success){
+            pieChart.drawCharts();
+            lineChart.drawLineChart();
+        }
+    }
+    
+    
     
     public static void main(String[] args){
         new BudgetManager();
