@@ -27,8 +27,8 @@ public class PieChart
     
         if (total == 0){
             UI.setColor(Color.BLACK);
-            UI.drawString("Expense", 70, 310);
-            UI.drawString("Please add expense to display the chart.", 50, 360);
+            UI.drawString("Expense", 600, 40);
+            UI.drawString("Please add expense to display the chart.", 580, 200);
             return;
         }
     
@@ -43,13 +43,13 @@ public class PieChart
     
                 UI.setColor(colours[colourNumber % colours.length]);
     
-                UI.fillArc(50, 330, 180, 180, startAngle, angle);
+                UI.fillArc(580, 60, 180, 180, startAngle, angle);
     
                 startAngle = startAngle + angle;
                 colourNumber++;
             }
         }
-        drawLegend(expenses, total, 260, 360);
+        drawLegend(expenses, total, 790, 90);
     }
     
     public void drawIncomeChart(){
