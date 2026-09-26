@@ -21,16 +21,37 @@ public class LineChart
 
         double balance = 0;
 
-        double startX = 50;
-        double startY = 700;
+        // Line chart boundaries
+        double chartTop = 390;
+        double chartBottom = 700;
+        double chartHeight = chartBottom - chartTop;
+
+        // Maximum monthly balance
+        double maxBalance = 4000;
+
+        double startX = 70;
+        double startY = chartBottom;
 
         double previousX = startX;
         double previousY = startY;
 
         UI.setColor(Color.BLACK);
 
-        UI.drawLine(50, 550, 50, 700);   // Y axis
-        UI.drawLine(50, 700, 600, 700);  // X axis
+        // Title
+        UI.drawString("BALANCE OVER TIME", 70, 370);
+
+        // Y axis
+        UI.drawLine(70, chartTop, 70, chartBottom);
+
+        // X axis
+        UI.drawLine(70, chartBottom, 1100, chartBottom);
+
+        // Y axis labels
+        UI.drawString("$4,000", 10, 395);
+        UI.drawString("$3,000", 10, 472);
+        UI.drawString("$2,000", 10, 550);
+        UI.drawString("$1,000", 10, 627);
+        UI.drawString("$0", 30, 700);
 
         for (int i = 0; i < transactions.size(); i++){
 
@@ -43,10 +64,16 @@ public class LineChart
                 balance = balance - transaction.getAmount();
             }
 
-            double x = 100 + (i * 70);
+            double x = 120 + (i * 70);
 
-            // temporary scale: $100 = 5 pixels
-            double y = 700 - (balance / 20);
+            // Position balance between $0 and $4,000
+            double y = chartBottom -
+                       (balance / maxBalance) * chartHeight;
+
+            // Prevent values above $4,000 going outside chart
+            if (y < chartTop){
+                y = chartTop;
+            }
 
             UI.drawLine(previousX, previousY, x, y);
 
@@ -59,3 +86,4 @@ public class LineChart
         }
     }
 }
+
