@@ -1,6 +1,7 @@
 import ecs100.*;
 import java.util.ArrayList;
 import java.awt.Color;
+
 import java.util.Comparator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -62,7 +63,31 @@ public class LineChart
         double chartHeight = chartBottom - chartTop;
 
         // Maximum monthly balance
-        double maxBalance = 4000;
+        double maxBalance = 0;
+        
+        //Minimum monthly balance
+        double minBalance = 0;
+        
+        // Goes through the transactions first to find the highest and lowest balance reached during the month
+        for (Transactions transaction : transactions){
+        
+            if (transaction.getType().equals("Income")){
+                balance = balance + transaction.getAmount();
+            }
+            else if (transaction.getType().equals("Expense")){
+                balance = balance - transaction.getAmount();
+            }
+        
+            // Updates the lowest balance reached
+            if (balance < minBalance){
+                minBalance = balance;
+            }
+        
+            // Updates the highest balance reached
+            if (balance > maxBalance){
+                maxBalance = balance;
+            }
+        }
 
         double startX = 70;
         double startY = chartBottom;
@@ -81,13 +106,31 @@ public class LineChart
 
         // X axis
         UI.drawLine(70, chartBottom, 1100, chartBottom);
+        
+        // Rounds the graph limits to the nearest $500 so the Y-axis has clearer values instead of unusual amounts
+        double graphMax = Math.ceil(maxBalance / 500.0) * 500;
+        double graphMin = Math.floor(minBalance / 500.0) * 500;
 
-        // Y axis labels
-        UI.drawString("$4,000", 10, 395);
-        UI.drawString("$3,000", 10, 472);
-        UI.drawString("$2,000", 10, 550);
-        UI.drawString("$1,000", 10, 627);
-        UI.drawString("$0", 30, 700);
+        // Prevents the graph range from being zero when there are no changes in balance
+        if (graphMax == graphMin){
+            graphMax = 500;
+        }
+        
+        // Resets the running balance before drawing the actual graph
+        balance = 0;
+        
+        // Creates five evenly spaced Y-axis labels between the minimum and maximum values of the graph
+        int numberOfLabels = 4;
+
+        for (int i = 0; i <= numberOfLabels; i++){
+            // Calculates the financial value shown at this position
+            double value = graphMin + ((graphMax - graphMin) / numberOfLabels) * i;
+        
+            // Converts the financial value into a Y position on the graph
+            double y = chartBottom - ((value - graphMin) / (graphMax - graphMin)) * chartHeight;
+        
+            UI.drawString("$" + String.format("%.0f", value), 10, y);
+        }
         
         // Goes through each transaction in order to calculate how the balance changes over time
         for (int i = 0; i < transactions.size(); i++){
@@ -107,7 +150,7 @@ public class LineChart
 
             // Converts the current balance into a vertical position.
             // A larger balance is placed higher on the graph.
-            double y = chartBottom - (balance / maxBalance) * chartHeight;
+            double y = chartBottom - ((balance - graphMin) / (graphMax - graphMin)) * chartHeight;
 
             // Prevent values above $4,000 going outside chart
             if (y < chartTop){
@@ -129,3 +172,4 @@ public class LineChart
         }
     }
 }
+
