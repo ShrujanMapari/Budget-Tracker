@@ -7,51 +7,53 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 /**
  * Driver Class.
+ * 
+ * BudgetManager is the driver class for the Budget Tracker.
+ * It manages the user interface and allows the user to interact with the program through buttons and input questions
+ * 
+ * It connects the Tracker, PieChart and LineChart classes so that financial date and graphs are updated when the user makes changes.
  *
- * Shrujan Mapari
- * 29/07/2026
+ * @author Shrujan Mapari
+ * @version 2026
  */
 public class BudgetManager
 {
-    // instance variables - replace the example below with your own
+    
     private static Tracker tracker;
     
     private PieChart pieChart;
     
     private LineChart lineChart;
-    //String username = UI.askString("Enter username");
-    //String password = UI.askString("Enter password"); 
-    
-    
-    
 
     /**
-     * Constructor for objects of class Budget
+     * Sets up the Budget Tracker when the program starts
+     * 
+     * It creates the Tracker and graphs objects, sets the window size 
+     * Adds all the buttons needed for the user to access the different features of the program
      */
     public BudgetManager(){
-        // initialise instance variables
+        // Sets up the ECS100 user interface
         UI.initialise();
         
+        // Sets a suitable window size so the user does not need to resize it
         UI.setWindowSize(1200, 860);
         
+        // Creates the objects used to store data and display graphs
         tracker = new Tracker();
         pieChart = new PieChart(tracker);
         lineChart = new LineChart(tracker);
         
-        UI.addButton("Instructions", this::instructions);
+        // Buttonsso the user can access the program's main features
+        UI.addButton("Instructions", this::instructions); // To help user navigate the program
         
         
-        
-        //UI.setMouseListener(this::doMouse)
         UI.addButton("Add Income", () -> this.transactions("incomes"));
         UI.addButton("Add Expense", () -> this.transactions("expenses"));        
         
         UI.addButton("Show Balance", this::showBalance);
         
         UI.addButton("Show Transactions", this::showTransactions);
-        
         UI.addButton("Edit Transaction", this::editTransaction);
-        
         UI.addButton("Delete Transaction", this::deleteTransaction);
         
         UI.addButton("Save", this::saveData);
@@ -59,9 +61,14 @@ public class BudgetManager
         
         UI.addButton("Quit", UI::quit);      
 
-        //User currentUser = new User(username, password);
+        
     }
     
+    /**
+     * Displays instructions explaining how to use the Budget Tracker
+     * 
+     * This helps new users understand what each main feature does before entering their financial information.
+     */
     public void instructions(){
         JOptionPane.showMessageDialog(null, "Welcome to Budget Tracker!\n\n" + 
         "This program helps you manage your income and expenses.\n\n" + 
@@ -76,11 +83,20 @@ public class BudgetManager
     }
     
     /**
-     * 
-     */
+     * Allows the user to add either an income or expense transaction.
+     *
+     * The type parameter determines whether income or expense categories are displayed. 
+     * The method asks the user for the category, date and amount, validates their choices, and sends the information to Tracker.
+     *
+     * After a successful transaction, the graphs are redrawn so they immediately display the updated financial information.
+     *
+     * @param type determines whether an income or expense is being added
+    */
     public void transactions(String type) {
         UI.clearText();
         
+        // Gives the user a chance to cancel if they selected
+        // Add Income or Add Expense accidentally
         int answer = JOptionPane.showConfirmDialog(null, "Do you want to continue adding " + type + "?", "Confirm", JOptionPane.YES_NO_OPTION);
     
         if (answer == JOptionPane.NO_OPTION){
@@ -111,7 +127,7 @@ public class BudgetManager
             
             choice = UI.askInt("Enter choice (1-13):");
             String category = "";
-            
+            // Checks the user's category choice before asking for more information
             if (choice == 1) {
                 category = "Grocery";
             } else if (choice == 2) {
@@ -143,13 +159,14 @@ public class BudgetManager
                 UI.println("Invalid option selected!");
                 return;
             }
-            
+            // Gets a valid transaction date within the current month
             date = askDate();
     
             amount = UI.askDouble("How much did it cost? $");
             boolean success = tracker.addExpenses(category, amount, description, date);
             if (success) {
                 UI.println("Expense added to " + category + "!");
+                // Updates the graphs and pie charts to show the newly added transaction
                 pieChart.drawCharts();
                 lineChart.drawLineChart();
             }else {
@@ -170,7 +187,7 @@ public class BudgetManager
                 
             choice = UI.askInt("Enter choice (1-7):");
             String category = "";
-            
+            // Checks the user's category choice before asking for more information
             if (choice == 1) {
                 category = "Ongoing employment";
             } else if (choice == 2) {
@@ -190,38 +207,56 @@ public class BudgetManager
                 UI.println("Invalid option selected!");
                 return;
             }
-            
+            // Gets a valid transaction date within the current month
             date = askDate();
             
             amount = UI.askDouble("How much did you earn? $");          
             
             tracker.addIncome(category, amount, description, date);
             
+            // Updates the graphs and pie charts to show the newly added transaction
             pieChart.drawCharts();
             lineChart.drawLineChart();
         }
         
     }
     
+    /**
+     * Displays all transactions currently stored in the Tracker.
+     *
+     * The text area is cleared first so the transaction history is easier for the user to read.
+     */
     public void showTransactions(){
         UI.clearText();
         tracker.displayTransactions();
     }
     
     /**
-     * 
+     * Displays the user's total income, total expenses and current balance.
+     *
+     * This gives the user a quick summary of their financial situation for the month.
      */
+    
     public void showBalance(){
         UI.clearText();
         tracker.displayBalance();
     }
     
     
+    /**
+     * Allows the user to remove an existing transaction.
+     *
+     * The transaction history is displayed so the user can select the transaction they want to delete. 
+     * Two confirmation messages are used to reduce the chance of accidentally deleting financial information.
+     *
+     * After deletion, the graphs are redrawn to show the updated data.
+     */
     public void deleteTransaction(){
         UI.clearText();
         tracker.displayTransactions();
         int choice = UI.askInt("Which transaction do you want to delete? (1-" + tracker.getTransactionCount() + ")");
-      
+        
+        // Uses two confirmations because deleting a transaction cannot be undone
         int firstConfirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this transaction?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
     
         if (firstConfirm != JOptionPane.YES_OPTION){
@@ -241,14 +276,25 @@ public class BudgetManager
         lineChart.drawLineChart();
     }
     
+    /**
+     * Asks the user for the date of a transaction and validates it.
+     *
+     * The date must use DD/MM/YYYY format, must be within the current month and cannot be in the future. 
+     * 
+     * If an invalid date is entered, an error message is displayed and the user can try again.
+     *
+     * @return the valid transaction date entered by the user
+     */
     public String askDate(){
 
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/uuuu");
     
+        // Repeats until the user enters a valid date
         while (true){
     
             String date = UI.askString("Enter date (DD/MM/YYYY):");
     
+            // Attempts to convert the user's text into a real date
             try{
                 LocalDate enteredDate = LocalDate.parse(date, format);
     
@@ -274,6 +320,15 @@ public class BudgetManager
         }
     }
     
+    /**
+     * Allows the user to change the amount of an existing transaction.
+     *
+     * The transaction history is shown first so the user can select the correct transaction. 
+     * 
+     * The new amount is passed to Tracker, which updates the transaction and recalculates the financial totals.
+     *
+     * The graphs are then redrawn to display the edited information.
+     */
     public void editTransaction(){
 
         UI.clearText();
@@ -290,17 +345,30 @@ public class BudgetManager
         double newAmount = UI.askDouble("Enter the new amount:");
     
         tracker.editTransaction(choice, newAmount);
-    
+        
+        // Updates the graphs and pie charts, removing the deleted transaction
         pieChart.drawCharts();
         lineChart.drawLineChart();
     }
     
+    /**
+     * Saves the current transaction data so it is not lost when the program is closed.
+     *
+     * The actual file handling is performed by the Tracker class.
+     */
     public void saveData(){
         UI.clearText();
     
         tracker.saveData();
     }
     
+    /**
+     * Loads previously saved transaction data into the program.
+     *
+     * Tracker handles reading and rebuilding the financial data.
+     * 
+     * If loading is successful, the graphs are redrawn so the loaded information is immediately visible to the user.
+     */
     public void loadData(){
         UI.clearText();
     
@@ -312,8 +380,11 @@ public class BudgetManager
         }
     }
     
-    
-    
+    /**
+     * Starts the College Budget Tracker.
+     *
+     * Creating a BudgetManager object initialises the user interface and makes the program ready for the user.
+     */
     public static void main(String[] args){
         new BudgetManager();
     }
