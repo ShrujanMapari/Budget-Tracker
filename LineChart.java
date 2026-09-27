@@ -1,7 +1,9 @@
 import ecs100.*;
 import java.util.ArrayList;
 import java.awt.Color;
-
+import java.util.Comparator;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 /**
  * The LineChart class displays how the user's balance changes over time as income and expense transactions are added.
  *
@@ -36,8 +38,14 @@ public class LineChart
      * Each balance is converted into a position on the graph and connected to the previous point to show the change over time.
      */
     public void drawLineChart(){
-        // Gets the individual transactions used to calculate the balance history
-        ArrayList<Transactions> transactions = tracker.getTransactions();
+        // Creates a copy so the original transaction history is not changed
+        ArrayList<Transactions> transactions = new ArrayList<>(tracker.getTransactions());
+        
+        // Converts the stored DD/MM/YYYY dates into real dates for sorting
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+        
+        // Sorts transactions from earliest date to latest date
+        transactions.sort(Comparator.comparing(transaction -> LocalDate.parse(transaction.getDate(), format)));
         
         // Displays a message instead of an empty graph when there is no data
         if (transactions.size() == 0){
