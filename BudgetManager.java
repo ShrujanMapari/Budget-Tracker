@@ -92,133 +92,202 @@ public class BudgetManager
      *
      * @param type determines whether an income or expense is being added
     */
-    public void transactions(String type) {
+    public void transactions(String type){
+    
         UI.clearText();
-        
-        // Gives the user a chance to cancel if they selected
-        // Add Income or Add Expense accidentally
+    
         int answer = JOptionPane.showConfirmDialog(null, "Do you want to continue adding " + type + "?", "Confirm", JOptionPane.YES_NO_OPTION);
     
-        if (answer == JOptionPane.NO_OPTION){
-          UI.println("Transaction cancelled.");
-          return;
+        if (answer != JOptionPane.YES_OPTION){
+            UI.println("Transaction cancelled.");
+            return;
         }
-        
-        double amount;
+    
         int choice;
+        String category = "";
         String description = "";
         String date;
-        
-        if (type.equals("expenses")) {
-            UI.println("\nSelect Expense Category:");
-            UI.println("1. Grocery");
-            UI.println("2. Rent");
-            UI.println("3. Clothes");
-            UI.println("4. Textbooks");
-            UI.println("5. Eating Out");
-            UI.println("6. Vehicle Repairs/Petrol Prices");
-            UI.println("7. Internet");
-            UI.println("8. Subcriptions");
-            UI.println("9. Debt Repayment");
-            UI.println("10. Gym");
-            UI.println("11. Trips/Holidays");
-            UI.println("12.Photocopying/Printing");
-            UI.println("13. Others");
-            
-            choice = UI.askInt("Enter choice (1-13):");
-            String category = "";
-            // Checks the user's category choice before asking for more information
-            if (choice == 1) {
-                category = "Grocery";
-            } else if (choice == 2) {
-                category = "Rent";
-            } else if (choice == 3) {
-                category = "Clothes";
-            } else if (choice == 4) {
-                category = "Textbooks";
-            }else if (choice == 5) {
-                category = "Eating Out";
-            } else if (choice == 6) {
-                category = "Vehicle Repairs/Petrol Prices";
-            }else if (choice == 7) {
-                category = "Internet";
-            } else if (choice == 8) {
-                category = "Subscriptions";
-            }else if (choice == 9) {
-                category = "Debt Repayment";
-            } else if (choice == 10) {
-                category = "Gym";
-            }else if (choice == 11) {
-                category = "Trips/Holidays";
-            } else if (choice == 12) {
-                category = "Photocopying/Printing";
-            }else if (choice == 13){
-                category = "Others";
-                description = UI.askString("What do you mean by Others?");
-            }else {
-                UI.println("Invalid option selected!");
-                return;
+        double amount;
+    
+    
+        // ---------------- EXPENSE ----------------
+    
+        if (type.equals("expenses")){
+    
+            // Keeps asking for an expense category until the user enters a valid option.
+            // This allows the user to recover from an incorrect choice without restarting the transaction.
+            boolean validChoice = false;
+    
+            // Keeps asking until the user enters a valid category
+            while (!validChoice){
+    
+                UI.println("\nChoose an expense category:");
+                UI.println("1. Grocery");
+                UI.println("2. Rent");
+                UI.println("3. Clothes");
+                UI.println("4. Textbooks");
+                UI.println("5. Eating Out");
+                UI.println("6. Vehicle Repairs/Petrol Prices");
+                UI.println("7. Internet");
+                UI.println("8. Subscriptions");
+                UI.println("9. Debt Repayment");
+                UI.println("10. Gym");
+                UI.println("11. Trips/Holidays");
+                UI.println("12. Photocopying/Printing");
+                UI.println("13. Others");
+    
+                choice = UI.askInt("Enter choice (1-13):");
+    
+                // Checks the user's choice and assigns the matching expense category
+                if (choice == 1){
+                    category = "Grocery";
+                    validChoice = true;
+                }
+                else if (choice == 2){
+                    category = "Rent";
+                    validChoice = true;
+                }
+                else if (choice == 3){
+                    category = "Clothes";
+                    validChoice = true;
+                }
+                else if (choice == 4){
+                    category = "Textbooks";
+                    validChoice = true;
+                }
+                else if (choice == 5){
+                    category = "Eating Out";
+                    validChoice = true;
+                }
+                else if (choice == 6){
+                    category = "Vehicle Repairs/Petrol Prices";
+                    validChoice = true;
+                }
+                else if (choice == 7){
+                    category = "Internet";
+                    validChoice = true;
+                }
+                else if (choice == 8){
+                    category = "Subscriptions";
+                    validChoice = true;
+                }
+                else if (choice == 9){
+                    category = "Debt Repayment";
+                    validChoice = true;
+                }
+                else if (choice == 10){
+                    category = "Gym";
+                    validChoice = true;
+                }
+                else if (choice == 11){
+                    category = "Trips/Holidays";
+                    validChoice = true;
+                }
+                else if (choice == 12){
+                    category = "Photocopying/Printing";
+                    validChoice = true;
+                }
+                else if (choice == 13){
+                    category = "Others";
+                    validChoice = true;
+                }
+                else{
+                    // An invalid choice keeps the user in the loop so they can try again
+                    UI.println("Invalid option. Please choose a number from 1-13.");
+                }
             }
-            // Gets a valid transaction date within the current month
+    
+            // Asks for extra information when the transaction does not fit an existing category
+            if (category.equals("Others")){
+                description = UI.askString("What do you mean by Others?");
+            }
+    
+            // Continues to the next steps only after a valid category has been selected
             date = askDate();
     
             amount = UI.askDouble("How much did it cost? $");
-            boolean success = tracker.addExpenses(category, amount, description, date);
-            if (success) {
+    
+            boolean added = tracker.addExpenses(category, amount, description, date);
+    
+            if (added){
                 UI.println("Expense added to " + category + "!");
-                // Updates the graphs and pie charts to show the newly added transaction
                 pieChart.drawCharts();
                 lineChart.drawLineChart();
-            }else {
-                UI.println("Unexpected error has occured. Please Try Again.");
             }
-            
-            
-            
-        } else if (type.equals("incomes")) {
-            UI.println("\nSelect Income Category:");
-            UI.println("1. Ongoing employment");
-            UI.println("2. Student Allowance");
-            UI.println("3. Scholarships");
-            UI.println("4. Parents/Family");
-            UI.println("5. Wellfare Support");
-            UI.println("6. Holiday Work/Savings");
-            UI.println("7. Others");
-                
-            choice = UI.askInt("Enter choice (1-7):");
-            String category = "";
-            // Checks the user's category choice before asking for more information
-            if (choice == 1) {
-                category = "Ongoing employment";
-            } else if (choice == 2) {
-                category = "Student Allowance";
-            } else if (choice == 3) {
-                category = "Scholarships";
-            } else if (choice == 4){
-                category = "Parents/Family";
-            } else if (choice == 5){
-                category = "Wellfare Support";
-            } else if (choice == 6){
-                category = "Holiday Work/Savings";
-            } else if (choice == 7){
-                category = "Others";
+        }
+    
+    
+        // ---------------- INCOME ----------------
+    
+        else if (type.equals("incomes")){
+    
+            // Keeps asking for an income category until the user enters a valid option.
+            // This prevents an incorrect choice from ending the whole transaction.
+            boolean validChoice = false;
+    
+            // Keeps asking until the user enters a valid category
+            while (!validChoice){
+    
+                // Displays the available income categories
+                UI.println("\nChoose an income category:");
+                UI.println("1. Ongoing employment");
+                UI.println("2. Student Allowance");
+                UI.println("3. Scholarships");
+                UI.println("4. Parents/Family");
+                UI.println("5. Wellfare Support");
+                UI.println("6. Holiday Work/Savings");
+                UI.println("7. Others");
+    
+                choice = UI.askInt("Enter choice (1-7):");
+    
+                if (choice == 1){
+                    category = "Ongoing employment";
+                    validChoice = true;
+                }
+                else if (choice == 2){
+                    category = "Student Allowance";
+                    validChoice = true;
+                }
+                else if (choice == 3){
+                    category = "Scholarships";
+                    validChoice = true;
+                }
+                else if (choice == 4){
+                    category = "Parents/Family";
+                    validChoice = true;
+                }
+                else if (choice == 5){
+                    category = "Wellfare Support";
+                    validChoice = true;
+                }
+                else if (choice == 6){
+                    category = "Holiday Work/Savings";
+                    validChoice = true;
+                }
+                else if (choice == 7){
+                    category = "Others";
+                    validChoice = true;
+                }
+                else{
+                    // Allows the user to correct their choice instead of restarting
+                    UI.println("Invalid option. Please choose a number from 1-7.");
+                }
+            }
+    
+            // Only asks this after a valid category has been selected
+            if (category.equals("Others")){
                 description = UI.askString("What do you mean by Others?");
-            }else {
-                UI.println("Invalid option selected!");
-                return;
             }
-            // Gets a valid transaction date within the current month
+    
             date = askDate();
-            
-            amount = UI.askDouble("How much did you earn? $");          
-            
+    
+            amount = UI.askDouble("How much income did you receive? $");
+    
             tracker.addIncome(category, amount, description, date);
-            
-            // Updates the graphs and pie charts to show the newly added transaction
+    
             pieChart.drawCharts();
             lineChart.drawLineChart();
         }
-        
     }
     
     /**
